@@ -70,25 +70,42 @@ function combineNodes(rules) {
 }
 
 function evaluate(node, data) {
-    if (node.type === 'operand') {
-        switch (node.operator) {
-            case '>': return data[node.key] > parseFloat(node.value);
-            case '<': return data[node.key] < parseFloat(node.value);
-            case '>=': return data[node.key] >= parseFloat(node.value);
-            case '<=': return data[node.key] <= parseFloat(node.value);
-            case '=': return data[node.key] == node.value;
-            case '!=': return data[node.key] != node.value;
-            default: throw new Error(`Unknown operator ${node.operator}`);
+    if (node.type === 'operator') {
+      const left = evaluate(node.left, data);
+      const right = evaluate(node.right, data);
+      if (node.operator === 'AND') {
+        return left && right;
+      } else if (node.operator === 'OR') {
+        return left || right;
+      }
+    } else if (node.type === 'operand') {
+      let { key, operator, value } = node;
+      if (typeof value === 'string'){
+        if (value[0] === "'" && value[value.length - 1] === "'") {
+          value = value.slice(1, value.length - 1);
         }
-    } else if (node.type === 'operator') {
-        const left = evaluate(node.left, data);
-        const right = evaluate(node.right, data);
-        switch (node.operator) {
-            case 'AND': return left && right;
-            case 'OR': return left || right;
-            default: throw new Error(`Unknown operator ${node.operator}`);
-        }
+      }
+    // console.log(value, data[key]);
+      switch (operator) {
+        case '>':
+          return data[key] > value;
+        case '<':
+          return data[key] < value;
+        case '>=':
+          return data[key] >= value;
+        case '<=':
+          return data[key] <= value;
+        case '==':
+          return data[key] == value;
+        case '!=':
+          return data[key] != value;
+        case '=': // assuming '=' is the same as '=='
+          return data[key] == value;
+        default:
+          return false;
+      }
     }
-}
-
+    return false;
+  }
+  
 module.exports = { parseRuleString, combineNodes, evaluate, printTree };    

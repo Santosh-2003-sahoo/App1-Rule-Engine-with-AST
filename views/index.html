@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rule Engine</title>
+    <!-- <script src="../controllers/ruleController.js"></script>/ -->
+</head>
+<body>
+    <h1>Rule Engine Application</h1>
+    
+    <h2>Create Rule</h2>
+    <form id="create-rule-form">
+        <label for="ruleName">Rule Name:</label>
+        <input type="text" id="ruleName" name="ruleName" required>
+        <label for="ruleString">Rule:</label>
+        <input type="text" id="ruleString" name="ruleString" required>
+        <button type="submit">Create Rule</button>
+    </form>
+    <pre id="create-rule-result"></pre>
+
+    <h2>Combine Rules</h2>
+    <form id="combine-rules-form">
+        <h3>Enter Rules to Combine:</h3>
+        <div id="rules-inputs">
+            <div>
+                <label for="combine-rule">Rule 1:</label>
+                <input type="text" id="combine-rule1" name="rule1" required>
+            </div>
+        </div>
+        <button type="button" id="add-rule">Add Another Rule</button>
+        <button type="submit">Combine Rules</button>
+    </form>
+    <pre id="combine-rules-result"></pre>
+
+    <h2>Evaluate Rule</h2>
+    <form id="evaluate-rule-form">
+        <label for="evaluate-ast">AST JSON:</label>
+        <textarea id="evaluate-ast" name="ast" required></textarea>
+        <label for="evaluate-data">Data JSON:</label>
+        <textarea id="evaluate-data" name="data" required></textarea>
+        <button type="submit">Evaluate Rule</button>
+    </form>
+    <pre id="evaluate-rule-result"></pre>
+
+    <script>
+        // Handle Create Rule form submission
+        document.getElementById('create-rule-form').addEventListener('submit', async function(event) {
+            event.preventDefault();
+            const ruleName = document.getElementById('ruleName').value;
+            const ruleString = document.getElementById('ruleString').value;
+            const response = await fetch('/api/rules/create_rule', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ ruleName, ruleString }),
+            });
+            const result = await response.json();
+            document.getElementById('create-rule-result').textContent = JSON.stringify(result, null, 2);
+        });
+
+        // Handle Combine Rules form submission
+        document.getElementById('combine-rules-form').addEventListener('submit', async function(event) {
+            event.preventDefault();
+            const rules = Array.from(document.querySelectorAll('input[id^="combine-rule"]')).map(input => input.value);
+            const response = await fetch('/api/rules/combine_rules', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ rules }),
+            });
+            const result = await response.json();
+            document.getElementById('combine-rules-result').textContent = JSON.stringify(result, null, 2);
+        });
+
+        // Add functionality to dynamically add more rule inputs
+        document.getElementById('add-rule').addEventListener('click', function() {
+            const ruleInputContainer = document.createElement('div');
+            const ruleCount = document.querySelectorAll('input[id^="combine-rule"]').length + 1;
+            ruleInputContainer.innerHTML = `
+                <label for="combine-rule">Rule ${ruleCount}:</label>
+                <input type="text" id="combine-rule${ruleCount}" name="rule${ruleCount}" required>
+            `;
+            document.getElementById('rules-inputs').appendChild(ruleInputContainer);
+        });
+
+        // Handle Evaluate Rule form submission
+        document.getElementById('evaluate-rule-form').addEventListener('submit', async function(event) {
+            event.preventDefault();
+            const ast = document.getElementById('evaluate-ast').value;
+            const data = document.getElementById('evaluate-data').value;
+            const response = await fetch('/api/rules/evaluate_rule', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ ruleAST: JSON.parse(ast), data: JSON.parse(data) }),
+            });
+            const result = await response.json();
+            document.getElementById('evaluate-rule-result').textContent = JSON.stringify(result, null, 2);
+        });
+    </script>
+</body>
+</html>

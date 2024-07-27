@@ -60,7 +60,7 @@ exports.evaluateRule = async (req, res) => {
     const rule = await Rule.find({ruleName: ast});
      // Log the fetched rule
     //  printTree(rule[0].ruleAST);
-     console.log('Fetched rule:',rule,ast); // Debug line
+    //  console.log('Fetched rule:',rule,ast); // Debug line
 
     if (!rule) {
       return res.status(404).json({ error: 'Rule not found' });

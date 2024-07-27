@@ -17,6 +17,7 @@
         <input type="text" id="ruleString" name="ruleString" required>
         <button type="submit">Create Rule</button>
     </form>
+    <!-- <div id="combined-rules-tree"></div> -->
     <pre id="create-rule-result"></pre>
 
     <h2>Combine Rules</h2>
@@ -48,6 +49,24 @@
     <pre id="evaluate-rule-result"></pre>
 
     <script>
+        function generateTreeHTML(node, prefix = '', isLeft = true) {
+            if (!node) return '';
+
+            let treeHTML = '';
+            treeHTML += prefix + (isLeft ? "├── " : "└── ") + (node.type === 'operator' ? node.operator : `${node.key} ${node.operator} ${node.value}`) + '<br>';
+
+            if (node.left) treeHTML += generateTreeHTML(node.left, prefix + (isLeft ? "│   " : "    "), true);
+            if (node.right) treeHTML += generateTreeHTML(node.right, prefix + (isLeft ? "│   " : "    "), false);
+
+            return treeHTML;
+        }
+
+        function displayTree(tree) {
+            const treeHTML = generateTreeHTML(tree);
+            document.getElementById('combined-rules-tree').innerHTML = treeHTML;
+        }
+        
+
         // Handle Create Rule form submission
         document.getElementById('create-rule-form').addEventListener('submit', async function(event) {
             event.preventDefault();
@@ -61,7 +80,12 @@
                 body: JSON.stringify({ ruleName, ruleString }),
             });
             const result = await response.json();
-            document.getElementById('create-rule-result').textContent = JSON.stringify(result, null, 2);
+            // document.getElementById('create-rule-result').textContent = JSON.stringify(result, null, 2);
+            let treeHTML = generateTreeHTML(result.ruleAST);
+            treeHTML += `<br><p>Rule Name: ${result.ruleName}</p>`;
+            document.getElementById('create-rule-result').innerHTML = treeHTML;
+            // displayTree();
+            // console.log(result);
         });
 
         // Handle Combine Rules form submission
@@ -78,7 +102,12 @@
                 body: JSON.stringify({ rules ,op}),
             });
             const result = await response.json();
-            document.getElementById('combine-rules-result').textContent = JSON.stringify(result, null, 2);
+            // document.getElementById('combine-rules-result').textContent = JSON.stringify(result, null, 2);
+            // displayTree(result.ruleAST);
+            let treeHTML = generateTreeHTML(result.ruleAST);
+            treeHTML += `<br><p>Rule Name: ${result.ruleName}</p>`;
+            document.getElementById('combine-rules-result').innerHTML = treeHTML;
+
         });
 
         // Add functionality to dynamically add more rule inputs

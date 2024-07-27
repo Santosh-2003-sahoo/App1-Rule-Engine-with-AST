@@ -51,19 +51,19 @@ function parseRuleString(ruleString) {
     return stack[0];
 }
 
-function printTree(node, prefix = "", isLeft = true) {
+function printTree(node,prefix = '', isLeft = true) {
     if (!node) return;
     console.log(prefix + (isLeft ? "├── " : "└── ") + (node.type === 'operator' ? node.operator : `${node.key} ${node.operator} ${node.value}`));
     if (node.left) printTree(node.left, prefix + (isLeft ? "│   " : "    "), true);
     if (node.right) printTree(node.right, prefix + (isLeft ? "│   " : "    "), false);
 }
 
-function combineNodes(rules) {
+function combineNodes(rules,op) {
     if (rules.length === 1) return rules[0];
 
     let combined = rules[0];
     for (let i = 1; i < rules.length; i++) {
-        combined = { type: 'operator', operator: 'AND', left: combined, right: rules[i] };
+        combined = { type: 'operator', operator: op, left: combined, right: rules[i] };
     }
 
     return combined;

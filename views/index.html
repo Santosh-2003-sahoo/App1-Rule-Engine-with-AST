@@ -26,6 +26,10 @@
             <div>
                 <label for="combine-rule">Rule 1:</label>
                 <input type="text" id="combine-rule1" name="rule1" required>
+                <select id="operator1" name="operator1">
+                    <option value="AND">AND</option>
+                    <option value="OR">OR</option>
+                </select>
             </div>
         </div>
         <button type="button" id="add-rule">Add Another Rule</button>
@@ -63,13 +67,15 @@
         // Handle Combine Rules form submission
         document.getElementById('combine-rules-form').addEventListener('submit', async function(event) {
             event.preventDefault();
+            const op=document.getElementById('operator1').value;
+            // console.log(op);
             const rules = Array.from(document.querySelectorAll('input[id^="combine-rule"]')).map(input => input.value);
             const response = await fetch('/api/rules/combine_rules', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ rules }),
+                body: JSON.stringify({ rules ,op}),
             });
             const result = await response.json();
             document.getElementById('combine-rules-result').textContent = JSON.stringify(result, null, 2);

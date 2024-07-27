@@ -35,13 +35,13 @@ exports.createRule = async (req, res) => {
 
 exports.combineRules = async (req, res) => {
   try {
-    const { rules } = req.body;
+    const { rules ,op} = req.body;
     const ruleDocs = await Rule.find({ ruleName: { $in: rules } });
     if (ruleDocs.length === 0) {
       return res.status(404).json({ error: 'No matching rules found' });
     }
     const ruleASTs = ruleDocs.map(rule => rule.ruleAST);
-    const combinedRootNode = combineNodes(ruleASTs);
+    const combinedRootNode = combineNodes(ruleASTs,op);
     // Generate a 4-letter random string
     const randomString = generateRandomLetterString(4);
     const rule = new Rule({ ruleName: `combined${randomString}`, ruleAST: combinedRootNode });

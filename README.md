@@ -53,7 +53,7 @@ This application is a rule engine that determines user eligibility based on attr
    npm install
    ```
    
-4. **Start MongoDB**
+3. **Start MongoDB**
 
    Ensure that MongoDB is running on your local machine:
 
@@ -61,7 +61,7 @@ This application is a rule engine that determines user eligibility based on attr
    mongod
    ```
 
-5. **Start the Backend Server**
+4. **Start the Backend Server**
 
    ```bash
    nodemon server.js
@@ -138,6 +138,6 @@ This application is a rule engine that determines user eligibility based on attr
 
 ## Running Tests
 
-You can add and run tests to ensure everything is working correctly. Create tests in the backend and frontend directories, then run them using the respective test commands for each environment.
+You can add and run tests to ensure everything is working correctly. 
 ```
 created bt: santosh sahoo

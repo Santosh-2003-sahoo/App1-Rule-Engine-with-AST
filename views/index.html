@@ -119,6 +119,8 @@
                 <input type="text" id="combine-rule${ruleCount}" name="rule${ruleCount}" required>
             `;
             document.getElementById('rules-inputs').appendChild(ruleInputContainer);
+            // Remove the "Add Another Rule" button after one click
+            this.remove();
         });
 
         // Handle Evaluate Rule form submission

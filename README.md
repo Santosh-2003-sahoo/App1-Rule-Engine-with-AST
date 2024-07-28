@@ -80,6 +80,11 @@ This application is a rule engine that determines user eligibility based on attr
        "ruleName": "Rule 1"
      }
      ```
+use appropriate spaces in Rules for correct results.
+
+Rule should be in follow format:
+variable operator value 
+
    - **Response:**
 
      ```json
